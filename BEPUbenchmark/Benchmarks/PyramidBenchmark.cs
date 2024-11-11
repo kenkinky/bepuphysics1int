@@ -8,9 +8,9 @@ namespace BEPUbenchmark.Benchmarks
 	{
 		protected override void InitializeSpace()
 		{
-			Fix64 boxSize = 2;
+			FP boxSize = 2;
 			int boxCount = 20;
-			Fix64 platformLength = MathHelper.Min(50, boxCount * boxSize + 10);
+			FP platformLength = MathHelper.Min(50, boxCount * boxSize + 10);
 			Space.Add(new Box(new Vector3(0, -.5m, 0), boxCount * boxSize + 20, 1,
 							  platformLength));
 

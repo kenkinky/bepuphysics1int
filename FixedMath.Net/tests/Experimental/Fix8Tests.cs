@@ -4,8 +4,7 @@ using Xunit;
 
 namespace FixMath.NET
 {
-
-    class Fix8Tests {
+    public class Fix8Tests {
 
         [Fact]
         public void DecimalToFix8AndBack() {

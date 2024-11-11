@@ -12,7 +12,7 @@ namespace BEPUphysics.CollisionTests
         /// <summary>
         /// Amount of penetration between the two objects.
         /// </summary>
-        public Fix64 PenetrationDepth;
+        public FP PenetrationDepth;
 
         /// <summary>
         /// Identifier used to link contact data with existing contacts and categorize members of a manifold.

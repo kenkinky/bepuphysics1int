@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>BEPUfloatBenchmark</RootNamespace>
     <AssemblyName>BEPUfloatBenchmark</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -57,6 +57,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BEPUik\BEPUik.csproj">
+      <Project>{2d5a0344-623a-4bfa-aab6-8ac64e2a4129}</Project>
+      <Name>BEPUik</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEPUphysics\BEPUphysics.csproj">
+      <Project>{c0d52c9f-14b8-4008-8ddc-109c27561a5c}</Project>
+      <Name>BEPUphysics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEPUutilities\BEPUutilities.csproj">
+      <Project>{34853dea-43a6-4f2f-a379-d1ee04d256d2}</Project>
+      <Name>BEPUutilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FixedMath.Net\src\FixedMath.NET.csproj">
+      <Project>{d46c606e-5826-465f-9983-251e3d3b2f1c}</Project>
+      <Name>FixedMath.NET</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

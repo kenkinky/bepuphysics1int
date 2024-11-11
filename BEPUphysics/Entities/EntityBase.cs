@@ -371,13 +371,13 @@ namespace BEPUphysics.Entities
             }
         }
 
-        internal Fix64 mass;
+        internal FP mass;
         ///<summary>
         /// Gets or sets the mass of the entity.  Setting this to an invalid value, such as a non-positive number, NaN, or infinity, makes the entity kinematic.
         /// Setting it to a valid positive number will also scale the inertia tensor if it was already dynamic, or force the calculation of a new inertia tensor
         /// if it was previously kinematic.
         ///</summary>
-        public Fix64 Mass
+        public FP Mass
         {
             get
             {
@@ -407,11 +407,11 @@ namespace BEPUphysics.Entities
             }
         }
 
-        internal Fix64 inverseMass;
+        internal FP inverseMass;
         /// <summary>
         /// Gets or sets the inverse mass of the entity.
         /// </summary>
-        public Fix64 InverseMass
+        public FP InverseMass
         {
             get
             {
@@ -569,7 +569,7 @@ namespace BEPUphysics.Entities
         ///</summary>
         ///<param name="collisionInformation">Collidable to use with the entity.</param>
         ///<param name="mass">Mass of the entity. If positive, the entity will be dynamic. Otherwise, it will be kinematic.</param>
-        public Entity(EntityCollidable collisionInformation, Fix64 mass)
+        public Entity(EntityCollidable collisionInformation, FP mass)
             : this()
         {
             Initialize(collisionInformation, mass);
@@ -581,7 +581,7 @@ namespace BEPUphysics.Entities
         ///<param name="collisionInformation">Collidable to use with the entity.</param>
         ///<param name="mass">Mass of the entity. If positive, the entity will be dynamic. Otherwise, it will be kinematic.</param>
         /// <param name="inertiaTensor">Inertia tensor of the entity. Only used for a dynamic entity.</param>
-        public Entity(EntityCollidable collisionInformation, Fix64 mass, Matrix3x3 inertiaTensor)
+        public Entity(EntityCollidable collisionInformation, FP mass, Matrix3x3 inertiaTensor)
             : this()
         {
             Initialize(collisionInformation, mass, inertiaTensor);
@@ -602,7 +602,7 @@ namespace BEPUphysics.Entities
         ///</summary>
         ///<param name="shape">Shape to use with the entity.</param>
         ///<param name="mass">Mass of the entity. If positive, the entity will be dynamic. Otherwise, it will be kinematic.</param>
-        public Entity(EntityShape shape, Fix64 mass)
+        public Entity(EntityShape shape, FP mass)
             : this()
         {
             Initialize(shape.GetCollidableInstance(), mass);
@@ -614,7 +614,7 @@ namespace BEPUphysics.Entities
         ///<param name="shape">Shape to use with the entity.</param>
         ///<param name="mass">Mass of the entity. If positive, the entity will be dynamic. Otherwise, it will be kinematic.</param>
         /// <param name="inertiaTensor">Inertia tensor of the entity. Only used for a dynamic entity.</param>
-        public Entity(EntityShape shape, Fix64 mass, Matrix3x3 inertiaTensor)
+        public Entity(EntityShape shape, FP mass, Matrix3x3 inertiaTensor)
             : this()
         {
             Initialize(shape.GetCollidableInstance(), mass, inertiaTensor);
@@ -632,7 +632,7 @@ namespace BEPUphysics.Entities
             collisionInformation.Entity = this;
         }
 
-        protected internal void Initialize(EntityCollidable collisionInformation, Fix64 mass)
+        protected internal void Initialize(EntityCollidable collisionInformation, FP mass)
         {
             CollisionInformation = collisionInformation;
 
@@ -648,7 +648,7 @@ namespace BEPUphysics.Entities
             collisionInformation.Entity = this;
         }
 
-        protected internal void Initialize(EntityCollidable collisionInformation, Fix64 mass, Matrix3x3 inertiaTensor)
+        protected internal void Initialize(EntityCollidable collisionInformation, FP mass, Matrix3x3 inertiaTensor)
         {
             CollisionInformation = collisionInformation;
 
@@ -852,7 +852,7 @@ namespace BEPUphysics.Entities
         /// Forces the entity to become dynamic.  Dynamic entities respond to collisions and have finite mass and inertia.
         ///</summary>
         ///<param name="mass">Mass to use for the entity.</param>
-        public void BecomeDynamic(Fix64 mass)
+        public void BecomeDynamic(FP mass)
         {
             BecomeDynamic(mass, collisionInformation.Shape.VolumeDistribution * (mass * InertiaHelper.InertiaTensorScale));
         }
@@ -862,7 +862,7 @@ namespace BEPUphysics.Entities
         ///</summary>
         ///<param name="mass">Mass to use for the entity.</param>
         /// <param name="localInertiaTensor">Inertia tensor to use for the entity.</param>
-        public void BecomeDynamic(Fix64 mass, Matrix3x3 localInertiaTensor)
+        public void BecomeDynamic(FP mass, Matrix3x3 localInertiaTensor)
         {
 			// if (mass <= 0) || Fix64.IsInfinity(mass) || Fix64.IsNaN(mass))
 			if (mass <= F64.C0)
@@ -897,7 +897,7 @@ namespace BEPUphysics.Entities
         }
 
 
-        void IForceUpdateable.UpdateForForces(Fix64 dt)
+        void IForceUpdateable.UpdateForForces(FP dt)
         {
 
             //Apply gravity.
@@ -916,29 +916,29 @@ namespace BEPUphysics.Entities
             if (activityInformation.DeactivationManager.useStabilization && activityInformation.allowStabilization &&
                 (activityInformation.isSlowing || activityInformation.velocityTimeBelowLimit > activityInformation.DeactivationManager.lowVelocityTimeMinimum))
             {
-                Fix64 energy = linearVelocity.LengthSquared() + angularVelocity.LengthSquared();
+                FP energy = linearVelocity.LengthSquared() + angularVelocity.LengthSquared();
                 if (energy < activityInformation.DeactivationManager.velocityLowerLimitSquared)
                 {
-                    Fix64 boost = F64.C1 - Fix64.Sqrt(energy) / (F64.C2 * activityInformation.DeactivationManager.velocityLowerLimit);
+                    FP boost = F64.C1 - FP.Sqrt(energy) / (F64.C2 * activityInformation.DeactivationManager.velocityLowerLimit);
                     ModifyAngularDamping(boost);
                     ModifyLinearDamping(boost);
                 }
             }
 
             //Damping
-            Fix64 linear = LinearDamping + linearDampingBoost;
+            FP linear = LinearDamping + linearDampingBoost;
             if (linear > F64.C0)
             {
-                Vector3.Multiply(ref linearVelocity, Fix64.Pow(MathHelper.Clamp(F64.C1 - linear, F64.C0, F64.C1), dt), out linearVelocity);
+                Vector3.Multiply(ref linearVelocity, FP.Pow(MathHelper.Clamp(F64.C1 - linear, F64.C0, F64.C1), dt), out linearVelocity);
             }
             //When applying angular damping, the momentum or velocity is damped depending on the conservation setting.
-            Fix64 angular = AngularDamping + angularDampingBoost;
+            FP angular = AngularDamping + angularDampingBoost;
             if (angular > F64.C0)
             {
 #if CONSERVE
                 Vector3.Multiply(ref angularMomentum, Fix64.Pow(MathHelper.Clamp(1 - angular, 0, 1), dt), out angularMomentum);
 #else
-				Vector3.Multiply(ref angularVelocity, Fix64.Pow(MathHelper.Clamp(F64.C1 - angular, F64.C0, F64.C1), dt), out angularVelocity);
+				Vector3.Multiply(ref angularVelocity, FP.Pow(MathHelper.Clamp(F64.C1 - angular, F64.C0, F64.C1), dt), out angularVelocity);
 #endif
             }
 
@@ -1057,7 +1057,7 @@ namespace BEPUphysics.Entities
             }
         }
 
-        void ICCDPositionUpdateable.UpdateTimesOfImpact(Fix64 dt)
+        void ICCDPositionUpdateable.UpdateTimesOfImpact(FP dt)
         {
             //I am a continuous object.  If I am in a pair with another object, even if I am inactive,
             //I must order the pairs to compute a time of impact.
@@ -1079,9 +1079,9 @@ namespace BEPUphysics.Entities
             }
         }
 
-        void ICCDPositionUpdateable.UpdatePositionContinuously(Fix64 dt)
+        void ICCDPositionUpdateable.UpdatePositionContinuously(FP dt)
         {
-            Fix64 minimumToi = F64.C1;
+            FP minimumToi = F64.C1;
             for (int i = 0; i < collisionInformation.pairs.Count; i++)
             {
                 if (collisionInformation.pairs.Elements[i].timeOfImpact < minimumToi)
@@ -1110,7 +1110,7 @@ namespace BEPUphysics.Entities
 #endif
         }
 
-        void IPositionUpdateable.PreUpdatePosition(Fix64 dt)
+        void IPositionUpdateable.PreUpdatePosition(FP dt)
         {
             Vector3 increment;
 
@@ -1149,15 +1149,15 @@ namespace BEPUphysics.Entities
 
 
 
-        Fix64 linearDampingBoost, angularDampingBoost;
-        Fix64 angularDamping = (Fix64).15m;
-        Fix64 linearDamping = (Fix64).03m;
+        FP linearDampingBoost, angularDampingBoost;
+        FP angularDamping = (FP).15m;
+        FP linearDamping = (FP).03m;
         ///<summary>
         /// Gets or sets the angular damping of the entity.
         /// Values range from 0 to 1, corresponding to a fraction of angular momentum removed
         /// from the entity over a unit of time.
         ///</summary>
-        public Fix64 AngularDamping
+        public FP AngularDamping
         {
             get
             {
@@ -1173,7 +1173,7 @@ namespace BEPUphysics.Entities
         /// Values range from 0 to 1, corresponding to a fraction of linear momentum removed
         /// from the entity over a unit of time.
         ///</summary>
-        public Fix64 LinearDamping
+        public FP LinearDamping
         {
             get
             {
@@ -1191,10 +1191,10 @@ namespace BEPUphysics.Entities
         /// damping returns to the base value.
         /// </summary>
         /// <param name="damping">Damping to add.</param>
-        public void ModifyLinearDamping(Fix64 damping)
+        public void ModifyLinearDamping(FP damping)
         {
-            Fix64 totalDamping = LinearDamping + linearDampingBoost;
-            Fix64 remainder = F64.C1 - totalDamping;
+            FP totalDamping = LinearDamping + linearDampingBoost;
+            FP remainder = F64.C1 - totalDamping;
             linearDampingBoost += damping * remainder;
         }
         /// <summary>
@@ -1202,10 +1202,10 @@ namespace BEPUphysics.Entities
         /// damping returns to the base value.
         /// </summary>
         /// <param name="damping">Damping to add.</param>
-        public void ModifyAngularDamping(Fix64 damping)
+        public void ModifyAngularDamping(FP damping)
         {
-            Fix64 totalDamping = AngularDamping + angularDampingBoost;
-            Fix64 remainder = F64.C1 - totalDamping;
+            FP totalDamping = AngularDamping + angularDampingBoost;
+            FP remainder = F64.C1 - totalDamping;
             angularDampingBoost += damping * remainder;
         }
 

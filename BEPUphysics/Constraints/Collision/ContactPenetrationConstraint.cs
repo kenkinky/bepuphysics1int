@@ -19,18 +19,18 @@ namespace BEPUphysics.Constraints.Collision
         /// Gets the contact associated with this penetration constraint.
         ///</summary>
         public Contact Contact { get { return contact; } }
-        internal Fix64 accumulatedImpulse;
+        internal FP accumulatedImpulse;
         //Fix64 linearBX, linearBY, linearBZ;
-        internal Fix64 angularAX, angularAY, angularAZ;
-        internal Fix64 angularBX, angularBY, angularBZ;
+        internal FP angularAX, angularAY, angularAZ;
+        internal FP angularBX, angularBY, angularBZ;
 
-        private Fix64 softness;
-        private Fix64 bias;
-        private Fix64 linearAX, linearAY, linearAZ;
+        private FP softness;
+        private FP bias;
+        private FP linearAX, linearAY, linearAZ;
         private Entity entityA, entityB;
         private bool entityADynamic, entityBDynamic;
         //Inverse effective mass matrix
-        internal Fix64 velocityToImpulse;
+        internal FP velocityToImpulse;
         private ContactManifoldConstraint contactManifoldConstraint;
 
         internal Vector3 ra, rb;
@@ -78,7 +78,7 @@ namespace BEPUphysics.Constraints.Collision
         /// <summary>
         /// Gets the total normal impulse applied by this penetration constraint to maintain the separation of the involved entities.
         /// </summary>
-        public Fix64 NormalImpulse
+        public FP NormalImpulse
         {
             get { return accumulatedImpulse; }
         }
@@ -86,11 +86,11 @@ namespace BEPUphysics.Constraints.Collision
         ///<summary>
         /// Gets the relative velocity between the associated entities at the contact point along the contact normal.
         ///</summary>
-        public Fix64 RelativeVelocity
+        public FP RelativeVelocity
         {
             get
             {
-                Fix64 lambda = F64.C0;
+                FP lambda = F64.C0;
                 if (entityA != null)
                 {
                     lambda = entityA.linearVelocity.X * linearAX + entityA.linearVelocity.Y * linearAY + entityA.linearVelocity.Z * linearAZ +
@@ -112,7 +112,7 @@ namespace BEPUphysics.Constraints.Collision
         /// Performs the frame's configuration step.
         ///</summary>
         ///<param name="dt">Timestep duration.</param>
-        public override void Update(Fix64 dt)
+        public override void Update(FP dt)
         {
 
             entityADynamic = entityA != null && entityA.isDynamic;
@@ -149,10 +149,10 @@ namespace BEPUphysics.Constraints.Collision
 
 
             //Compute inverse effective mass matrix
-            Fix64 entryA, entryB;
+            FP entryA, entryB;
 
             //these are the transformed coordinates
-            Fix64 tX, tY, tZ;
+            FP tX, tY, tZ;
             if (entityADynamic)
             {
                 tX = angularAX * entityA.inertiaTensorInverse.M11 + angularAY * entityA.inertiaTensorInverse.M21 + angularAZ * entityA.inertiaTensorInverse.M31;
@@ -182,8 +182,8 @@ namespace BEPUphysics.Constraints.Collision
             //Larger effective masses should correspond to smaller softnesses so that the spring has the same positional behavior.
             //Fortunately, we're already computing the necessary values: the raw, unsoftened effective mass inverse shall be used to compute the softness.
 
-            Fix64 effectiveMassInverse = entryA + entryB;
-            Fix64 updateRate = F64.C1 / dt;
+            FP effectiveMassInverse = entryA + entryB;
+            FP updateRate = F64.C1 / dt;
             softness = CollisionResponseSettings.Softness * effectiveMassInverse * updateRate;
             velocityToImpulse = -1 / (softness + effectiveMassInverse);
 
@@ -199,7 +199,7 @@ namespace BEPUphysics.Constraints.Collision
                 if (contactManifoldConstraint.materialInteraction.Bounciness > F64.C0)
                 {
                     //Target a velocity which includes a portion of the incident velocity.
-                    Fix64 bounceVelocity = -RelativeVelocity;
+                    FP bounceVelocity = -RelativeVelocity;
                     if (bounceVelocity > F64.C0)
                     {
                         var lowThreshold = CollisionResponseSettings.BouncinessVelocityThreshold * F64.C0p3;
@@ -276,14 +276,14 @@ namespace BEPUphysics.Constraints.Collision
         /// Computes and applies an impulse to keep the colliders from penetrating.
         /// </summary>
         /// <returns>Impulse applied.</returns>
-        public override Fix64 SolveIteration()
+        public override FP SolveIteration()
         {
 
             //Compute relative velocity
-            Fix64 lambda = (RelativeVelocity - bias + softness * accumulatedImpulse) * velocityToImpulse;
+            FP lambda = (RelativeVelocity - bias + softness * accumulatedImpulse) * velocityToImpulse;
 
             //Clamp accumulated impulse
-            Fix64 previousAccumulatedImpulse = accumulatedImpulse;
+            FP previousAccumulatedImpulse = accumulatedImpulse;
             accumulatedImpulse = MathHelper.Max(F64.C0, accumulatedImpulse + lambda);
             lambda = accumulatedImpulse - previousAccumulatedImpulse;
 
@@ -318,7 +318,7 @@ namespace BEPUphysics.Constraints.Collision
                 entityB.ApplyAngularImpulse(ref angular);
             }
 
-            return Fix64.Abs(lambda);
+            return FP.Abs(lambda);
         }
 
         protected internal override void CollectInvolvedEntities(RawList<Entity> outputInvolvedEntities)

@@ -11,14 +11,14 @@ namespace FixMath.NET
             random = new Random(seed);
         }
 
-        public Fix64 Next()
+        public FP Next()
         {
-            Fix64 result = new Fix64();
+            FP result = new FP();
             result.RawValue = (uint)random.Next(int.MinValue, int.MaxValue);
             return result;
         }
 
-        public Fix64 NextInt(int maxValue)
+        public FP NextInt(int maxValue)
         {
             return random.Next(maxValue);
         }

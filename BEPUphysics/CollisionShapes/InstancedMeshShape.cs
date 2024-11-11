@@ -53,13 +53,13 @@ namespace BEPUphysics.CollisionShapes
 #if !WINDOWS
             boundingBox = new BoundingBox();
 #endif
-            Fix64 minX = Fix64.MaxValue;
-            Fix64 minY = Fix64.MaxValue;
-            Fix64 minZ = Fix64.MaxValue;
+            FP minX = FP.MaxValue;
+            FP minY = FP.MaxValue;
+            FP minZ = FP.MaxValue;
 
-            Fix64 maxX = -Fix64.MaxValue;
-            Fix64 maxY = -Fix64.MaxValue;
-            Fix64 maxZ = -Fix64.MaxValue;
+            FP maxX = -FP.MaxValue;
+            FP maxY = -FP.MaxValue;
+            FP maxZ = -FP.MaxValue;
             for (int i = 0; i < triangleMesh.Data.vertices.Length; i++)
             {
                 Vector3 vertex;

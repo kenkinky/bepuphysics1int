@@ -20,8 +20,8 @@ namespace BEPUfloatBenchmark
 		public void Initialize()
 		{
 			Space = new Space();
-			Space.ForceUpdater.Gravity = new Vector3(0, -9.81f, 0);
-			Space.TimeStepSettings.TimeStepDuration = 1f / 60;
+			Space.ForceUpdater.Gravity = new Vector3(0, -9.81m, 0);
+			Space.TimeStepSettings.TimeStepDuration = 1m / 60;
 
 			InitializeSpace();
 		}

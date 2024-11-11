@@ -58,7 +58,7 @@ namespace BEPUphysics.NarrowPhaseSystems.Pairs
 
       
 
-        protected override void ConfigureCollidable(TriangleEntry entry, Fix64 dt)
+        protected override void ConfigureCollidable(TriangleEntry entry, FP dt)
         {
 
         }
@@ -103,7 +103,7 @@ namespace BEPUphysics.NarrowPhaseSystems.Pairs
 
 
 
-        protected override void UpdateContainedPairs(Fix64 dt)
+        protected override void UpdateContainedPairs(FP dt)
         {
             var overlappedElements = CommonResources.GetIntList();
             BoundingBox localBoundingBox;

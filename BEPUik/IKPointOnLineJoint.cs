@@ -68,10 +68,10 @@ namespace BEPUik
         {
             Vector3 cross;
             Vector3.Cross(ref localLineDirection, ref Toolbox.UpVector, out cross);
-            Fix64 lengthSquared = cross.LengthSquared();
+            FP lengthSquared = cross.LengthSquared();
             if (lengthSquared > Toolbox.Epsilon)
             {
-                Vector3.Divide(ref cross, Fix64.Sqrt(lengthSquared), out localRestrictedAxis1);
+                Vector3.Divide(ref cross, FP.Sqrt(lengthSquared), out localRestrictedAxis1);
             }
             else
             {
@@ -122,7 +122,7 @@ namespace BEPUik
             //Find the point on the line closest to the world point.
             Vector3 offset;
             Vector3.Subtract(ref worldPoint, ref worldLineAnchor, out offset);
-            Fix64 distanceAlongAxis;
+            FP distanceAlongAxis;
             Vector3.Dot(ref offset, ref lineDirection, out distanceAlongAxis);
 
             Vector3 worldNearPoint;

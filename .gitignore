@@ -215,3 +215,4 @@ ModelManifest.xml
 *.scache
 *.opendb
 *.db
+/.idea

@@ -25,8 +25,8 @@ namespace BEPUbenchmark.Benchmarks
 
 			int numColumns = 40;
 			int numRows = 40;
-			Fix64 xSpacing = 1.0m;
-			Fix64 zSpacing = 1.0m;
+			FP xSpacing = 1.0m;
+			FP zSpacing = 1.0m;
 			var lattice = new Entity[numRows, numColumns];
 			for (int i = 0; i < numRows; i++)
 				for (int j = 0; j < numColumns; j++)
@@ -49,8 +49,8 @@ namespace BEPUbenchmark.Benchmarks
 			//rest of the solving load (collisions).
 			Space.Solver.IterationLimit = 10;
 
-			Fix64 damping = 20000, stiffness = 20000;
-			Fix64 starchDamping = 5000, starchStiffness = 500;
+			FP damping = 20000, stiffness = 20000;
+			FP starchDamping = 5000, starchStiffness = 500;
 
 			//Loop through the grid and set up the joints.
 			for (int i = 0; i < numRows; i++)

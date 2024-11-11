@@ -18,7 +18,7 @@ namespace BEPUbenchmark.Benchmarks
 		private Path<Quaternion> orientationPath;
 		private Path<Vector3> positionPath;
 		private EntityRotator rotator;
-		private Fix64 pathTime;
+		private FP pathTime;
 
 		protected override void InitializeSpace()
 		{
@@ -50,9 +50,9 @@ namespace BEPUbenchmark.Benchmarks
 			for (int i = 1; i <= 10; i++)
 			{
 				wrappedPositionCurve.ControlPoints.Add(i, new Vector3(
-															  (Fix64)random.NextDouble() * 20 - 10,
-															  (Fix64)random.NextDouble() * 12,
-															  (Fix64)random.NextDouble() * 20 - 10));
+															  (FP)random.NextDouble() * 20 - 10,
+															  (FP)random.NextDouble() * 12,
+															  (FP)random.NextDouble() * 20 - 10));
 			}
 
 			positionPath = wrappedPositionCurve;
@@ -89,9 +89,9 @@ namespace BEPUbenchmark.Benchmarks
 			int numColumns = 7;
 			int numRows = 7;
 			int numHigh = 3;
-			Fix64 xSpacing = 2.09m;
-			Fix64 ySpacing = 2.08m;
-			Fix64 zSpacing = 2.09m;
+			FP xSpacing = 2.09m;
+			FP ySpacing = 2.08m;
+			FP zSpacing = 2.09m;
 			for (int i = 0; i < numRows; i++)
 				for (int j = 0; j < numColumns; j++)
 					for (int k = 0; k < numHigh; k++)

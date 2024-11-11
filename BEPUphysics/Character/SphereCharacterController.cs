@@ -63,10 +63,10 @@ namespace BEPUphysics.Character
             }
             set
             {
-                Fix64 lengthSquared = value.LengthSquared();
+                FP lengthSquared = value.LengthSquared();
                 if (lengthSquared < Toolbox.Epsilon)
                     return; //Silently fail. Assuming here that a dynamic process is setting this property; don't need to make a stink about it.
-                Vector3.Divide(ref value, Fix64.Sqrt(lengthSquared), out value);
+                Vector3.Divide(ref value, FP.Sqrt(lengthSquared), out value);
                 down = value;
             }
         }
@@ -90,11 +90,11 @@ namespace BEPUphysics.Character
             }
         }
 
-        private Fix64 jumpSpeed;
+        private FP jumpSpeed;
         /// <summary>
         /// Gets or sets the speed at which the character leaves the ground when it jumps.
         /// </summary>
-        public Fix64 JumpSpeed
+        public FP JumpSpeed
         {
             get
             {
@@ -107,11 +107,11 @@ namespace BEPUphysics.Character
                 jumpSpeed = value;
             }
         }
-        Fix64 slidingJumpSpeed;
+        FP slidingJumpSpeed;
         /// <summary>
         /// Gets or sets the speed at which the character leaves the ground when it jumps without traction.
         /// </summary>
-        public Fix64 SlidingJumpSpeed
+        public FP SlidingJumpSpeed
         {
             get
             {
@@ -124,11 +124,11 @@ namespace BEPUphysics.Character
                 slidingJumpSpeed = value;
             }
         }
-        Fix64 jumpForceFactor = F64.C1;
+        FP jumpForceFactor = F64.C1;
         /// <summary>
         /// Gets or sets the amount of force to apply to supporting dynamic entities as a fraction of the force used to reach the jump speed.
         /// </summary>
-        public Fix64 JumpForceFactor
+        public FP JumpForceFactor
         {
             get
             {
@@ -142,12 +142,12 @@ namespace BEPUphysics.Character
             }
         }
 
-        Fix64 speed;
+        FP speed;
         /// <summary>
         /// Gets or sets the speed at which the character will try to move while standing with a support that provides traction.
         /// Relative velocities with a greater magnitude will be decelerated.
         /// </summary>
-        public Fix64 Speed
+        public FP Speed
         {
             get
             {
@@ -160,11 +160,11 @@ namespace BEPUphysics.Character
                 speed = value;
             }
         }
-        Fix64 tractionForce;
+        FP tractionForce;
         /// <summary>
         /// Gets or sets the maximum force that the character can apply while on a support which provides traction.
         /// </summary>
-        public Fix64 TractionForce
+        public FP TractionForce
         {
             get
             {
@@ -178,12 +178,12 @@ namespace BEPUphysics.Character
             }
         }
 
-        Fix64 slidingSpeed;
+        FP slidingSpeed;
         /// <summary>
         /// Gets or sets the speed at which the character will try to move while on a support that does not provide traction.
         /// Relative velocities with a greater magnitude will be decelerated.
         /// </summary>
-        public Fix64 SlidingSpeed
+        public FP SlidingSpeed
         {
             get
             {
@@ -196,11 +196,11 @@ namespace BEPUphysics.Character
                 slidingSpeed = value;
             }
         }
-        Fix64 slidingForce;
+        FP slidingForce;
         /// <summary>
         /// Gets or sets the maximum force that the character can apply while on a support which does not provide traction.
         /// </summary>
-        public Fix64 SlidingForce
+        public FP SlidingForce
         {
             get
             {
@@ -214,12 +214,12 @@ namespace BEPUphysics.Character
             }
         }
 
-        Fix64 airSpeed;
+        FP airSpeed;
         /// <summary>
         /// Gets or sets the speed at which the character will try to move with no support.
         /// The character will not be decelerated while airborne.
         /// </summary>
-        public Fix64 AirSpeed
+        public FP AirSpeed
         {
             get
             {
@@ -232,11 +232,11 @@ namespace BEPUphysics.Character
                 airSpeed = value;
             }
         }
-        Fix64 airForce;
+        FP airForce;
         /// <summary>
         /// Gets or sets the maximum force that the character can apply with no support.
         /// </summary>
-        public Fix64 AirForce
+        public FP AirForce
         {
             get
             {
@@ -250,13 +250,13 @@ namespace BEPUphysics.Character
             }
         }
 
-        private Fix64 speedScale = F64.C1;
+        private FP speedScale = F64.C1;
         /// <summary>
         /// Gets or sets a scaling factor to apply to the maximum speed of the character.
         /// This is useful when a character does not have 0 or MaximumSpeed target speed, but rather
         /// intermediate values. A common use case is analog controller sticks.
         /// </summary>
-        public Fix64 SpeedScale
+        public FP SpeedScale
         {
             get { return speedScale; }
             set { speedScale = value; }
@@ -294,20 +294,20 @@ namespace BEPUphysics.Character
         public SphereCharacterController(
 			// Fix64 cannot be used for default parameters. As a workaround, make all parameters nullable and assign default values inside the constructor
 			Vector3 position = new Vector3(),
-            Fix64? radius = null, Fix64? mass = null,
-            Fix64? maximumTractionSlope = null, Fix64? maximumSupportSlope = null,
-            Fix64? speed = null, Fix64? tractionForce = null, Fix64? slidingSpeed = null, Fix64? slidingForce = null, Fix64? airSpeed = null, Fix64? airForce = null,
-            Fix64? jumpSpeed = null, Fix64? slidingJumpSpeed = null,
-            Fix64? maximumGlueForce = null)
+            FP? radius = null, FP? mass = null,
+            FP? maximumTractionSlope = null, FP? maximumSupportSlope = null,
+            FP? speed = null, FP? tractionForce = null, FP? slidingSpeed = null, FP? slidingForce = null, FP? airSpeed = null, FP? airForce = null,
+            FP? jumpSpeed = null, FP? slidingJumpSpeed = null,
+            FP? maximumGlueForce = null)
         {
 			if (radius == null)
-				radius = (Fix64).85m;
+				radius = (FP).85m;
 			if (mass == null)
 				mass = 10;
 			if (maximumTractionSlope == null)
-				maximumTractionSlope = (Fix64)0.8m;
+				maximumTractionSlope = (FP)0.8m;
 			if (maximumSupportSlope == null)
-				maximumSupportSlope = (Fix64)1.3m;
+				maximumSupportSlope = (FP)1.3m;
 			if (speed == null)
 				speed = 8;
 			if (tractionForce == null)
@@ -321,13 +321,13 @@ namespace BEPUphysics.Character
 			if (airForce == null)
 				airForce = 250;
 			if (jumpSpeed == 0)
-				jumpSpeed = (Fix64)4.5m;
+				jumpSpeed = (FP)4.5m;
 			if (slidingJumpSpeed == null)
 				slidingJumpSpeed = 3;
 			if (maximumGlueForce == null)
 				maximumGlueForce = 5000;
 
-			Body = new Sphere(position, (Fix64)radius, (Fix64)mass);
+			Body = new Sphere(position, (FP)radius, (FP)mass);
             Body.IgnoreShapeChanges = true; //Wouldn't want inertia tensor recomputations to occur if the shape changes.
             //Making the character a continuous object prevents it from flying through walls which would be pretty jarring from a player's perspective.
             Body.PositionUpdateMode = PositionUpdateMode.Continuous;
@@ -336,22 +336,22 @@ namespace BEPUphysics.Character
             //In a future version where this is changed, change this to conceptually minimally required CreatingPair.
             Body.CollisionInformation.Events.DetectingInitialCollision += RemoveFriction;
             Body.LinearDamping = F64.C0;
-            ContactCategorizer = new CharacterContactCategorizer((Fix64)maximumTractionSlope, (Fix64)maximumSupportSlope);
+            ContactCategorizer = new CharacterContactCategorizer((FP)maximumTractionSlope, (FP)maximumSupportSlope);
             QueryManager = new QueryManager(Body, ContactCategorizer);
             SupportFinder = new SupportFinder(Body, QueryManager, ContactCategorizer);
             HorizontalMotionConstraint = new HorizontalMotionConstraint(Body, SupportFinder);
-            HorizontalMotionConstraint.PositionAnchorDistanceThreshold = (Fix64)(3m / 17m) * (Fix64)radius;
-            VerticalMotionConstraint = new VerticalMotionConstraint(Body, SupportFinder, (Fix64)maximumGlueForce);
+            HorizontalMotionConstraint.PositionAnchorDistanceThreshold = (FP)(3m / 17m) * (FP)radius;
+            VerticalMotionConstraint = new VerticalMotionConstraint(Body, SupportFinder, (FP)maximumGlueForce);
             PairLocker = new CharacterPairLocker(Body);
 
-            Speed = (Fix64)speed;
-            TractionForce = (Fix64)tractionForce;
-            SlidingSpeed = (Fix64)slidingSpeed;
-            SlidingForce = (Fix64)slidingForce;
-            AirSpeed = (Fix64)airSpeed;
-            AirForce = (Fix64)airForce;
-            JumpSpeed = (Fix64)jumpSpeed;
-            SlidingJumpSpeed = (Fix64)slidingJumpSpeed;
+            Speed = (FP)speed;
+            TractionForce = (FP)tractionForce;
+            SlidingSpeed = (FP)slidingSpeed;
+            SlidingForce = (FP)slidingForce;
+            AirSpeed = (FP)airSpeed;
+            AirForce = (FP)airForce;
+            JumpSpeed = (FP)jumpSpeed;
+            SlidingJumpSpeed = (FP)slidingJumpSpeed;
 
             //Enable multithreading for the sphere characters.  
             //See the bottom of the Update method for more information about using multithreading with this character.
@@ -402,7 +402,7 @@ namespace BEPUphysics.Character
 
         }
 
-        void IBeforeSolverUpdateable.Update(Fix64 dt)
+        void IBeforeSolverUpdateable.Update(FP dt)
         {
             //Someone may want to use the Body.CollisionInformation.Tag for their own purposes.
             //That could screw up the locking mechanism above and would be tricky to track down.
@@ -424,7 +424,7 @@ namespace BEPUphysics.Character
                 //Compute the initial velocities relative to the support.
                 Vector3 relativeVelocity;
                 ComputeRelativeVelocity(ref supportData, out relativeVelocity);
-                Fix64 verticalVelocity = Vector3.Dot(supportData.Normal, relativeVelocity);
+                FP verticalVelocity = Vector3.Dot(supportData.Normal, relativeVelocity);
 
 
 
@@ -446,10 +446,10 @@ namespace BEPUphysics.Character
                     if (SupportFinder.HasTraction)
                     {
                         //The character has traction, so jump straight up.
-                        Fix64 currentDownVelocity;
+                        FP currentDownVelocity;
                         Vector3.Dot(ref down, ref relativeVelocity, out currentDownVelocity);
                         //Target velocity is JumpSpeed.
-                        Fix64 velocityChange = MathHelper.Max(jumpSpeed + currentDownVelocity, F64.C0);
+                        FP velocityChange = MathHelper.Max(jumpSpeed + currentDownVelocity, F64.C0);
                         ApplyJumpVelocity(ref supportData, down * -velocityChange, ref relativeVelocity);
 
 
@@ -462,9 +462,9 @@ namespace BEPUphysics.Character
                     else if (SupportFinder.HasSupport)
                     {
                         //The character does not have traction, so jump along the surface normal instead.
-                        Fix64 currentNormalVelocity = Vector3.Dot(supportData.Normal, relativeVelocity);
+                        FP currentNormalVelocity = Vector3.Dot(supportData.Normal, relativeVelocity);
                         //Target velocity is JumpSpeed.
-                        Fix64 velocityChange = MathHelper.Max(slidingJumpSpeed - currentNormalVelocity, F64.C0);
+                        FP velocityChange = MathHelper.Max(slidingJumpSpeed - currentNormalVelocity, F64.C0);
                         ApplyJumpVelocity(ref supportData, supportData.Normal * -velocityChange, ref relativeVelocity);
 
                         //Prevent any old contacts from hanging around and coming back with a negative depth.

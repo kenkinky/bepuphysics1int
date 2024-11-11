@@ -223,7 +223,7 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
         /// Performs the frame's configuration step.
         ///</summary>
         ///<param name="dt">Timestep duration.</param>
-        public override void Update(Fix64 dt)
+        public override void Update(FP dt)
         {
             Matrix3x3.Transform(ref localAxisA, ref connectionA.orientationMatrix, out worldAxisA);
             Matrix3x3.Transform(ref localAxisB, ref connectionB.orientationMatrix, out worldAxisB);
@@ -237,7 +237,7 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
 
             Vector3.Dot(ref error, ref worldConstrainedAxis1, out this.error.X);
             Vector3.Dot(ref error, ref worldConstrainedAxis2, out this.error.Y);
-            Fix64 errorReduction;
+            FP errorReduction;
             springSettings.ComputeErrorReductionAndSoftness(dt, F64.C1 / dt, out errorReduction, out softness);
             errorReduction = -errorReduction;
             biasVelocity.X = errorReduction * this.error.X;
@@ -245,10 +245,10 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
 
 
             //Ensure that the corrective velocity doesn't exceed the max.
-            Fix64 length = biasVelocity.LengthSquared();
+            FP length = biasVelocity.LengthSquared();
             if (length > maxCorrectiveVelocitySquared)
             {
-                Fix64 multiplier = maxCorrectiveVelocity / Fix64.Sqrt(length);
+                FP multiplier = maxCorrectiveVelocity / FP.Sqrt(length);
                 biasVelocity.X *= multiplier;
                 biasVelocity.Y *= multiplier;
             }
@@ -321,7 +321,7 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
         /// Computes one iteration of the constraint to meet the solver updateable's goal.
         /// </summary>
         /// <returns>The rough applied impulse magnitude.</returns>
-        public override Fix64 SolveIteration()
+        public override FP SolveIteration()
         {
             // lambda = -mc * (Jv + b)
             // P = JT * lambda
@@ -361,7 +361,7 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
                 connectionB.ApplyAngularImpulse(ref impulse);
             }
 
-            return (Fix64.Abs(lambda.X) + Fix64.Abs(lambda.Y));
+            return (FP.Abs(lambda.X) + FP.Abs(lambda.Y));
         }
 
 

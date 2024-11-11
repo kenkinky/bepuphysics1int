@@ -4,6 +4,7 @@ using BEPUphysics.Paths;
 using BEPUphysics.Paths.PathFollowing;
 using BEPUutilities;
 using System;
+using FixMath.NET;
 
 namespace BEPUfloatBenchmark.Benchmarks
 {
@@ -45,9 +46,9 @@ namespace BEPUfloatBenchmark.Benchmarks
 			for (int i = 1; i <= 10; i++)
 			{
 				wrappedPositionCurve.ControlPoints.Add(i, new Vector3(
-															  (float)random.NextDouble() * 20 - 10,
-															  (float)random.NextDouble() * 12,
-															  (float)random.NextDouble() * 20 - 10));
+															  (FP)((float)random.NextDouble() * 20 - 10),
+															  (FP)((float)random.NextDouble() * 12),
+															  (FP)((float)random.NextDouble() * 20 - 10)));
 			}
 
 			positionPath = wrappedPositionCurve;
@@ -92,18 +93,18 @@ namespace BEPUfloatBenchmark.Benchmarks
 					for (int k = 0; k < numHigh; k++)
 					{
 						Space.Add(new Box(new Vector3(
-											  xSpacing * i - (numRows - 1) * xSpacing / 2,
-											  1.58f + k * (ySpacing),
-											  2 + zSpacing * j - (numColumns - 1) * zSpacing / 2),
+											  (FP)(xSpacing * i - (numRows - 1) * xSpacing / 2),
+											  (FP)(1.58f + k * (ySpacing)),
+											  (FP)(2 + zSpacing * j - (numColumns - 1) * zSpacing / 2)),
 										  2, 2, 2, 10));
 					}
 		}
 
 		protected override void Step()
 		{
-			pathTime += Space.TimeStepSettings.TimeStepDuration;
-			mover.TargetPosition = positionPath.Evaluate(pathTime);
-			rotator.TargetOrientation = orientationPath.Evaluate(pathTime);
+			pathTime += (float)this.Space.TimeStepSettings.TimeStepDuration;
+			mover.TargetPosition = positionPath.Evaluate((FP)this.pathTime);
+			rotator.TargetOrientation = orientationPath.Evaluate((FP)this.pathTime);
 			base.Step();
 		}
 	}

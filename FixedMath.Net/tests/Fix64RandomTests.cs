@@ -21,8 +21,8 @@ namespace FixMath.NET
 
             for (int i = 0; i < maxValue * 100; i++)
             {
-                Fix64 value = rand.NextInt(maxValue);
-                Assert.True(value >= Fix64.Zero && value < maxValue, string.Format("NextInt({0}) = expected 0 <= result < {0} but got {1}", maxValue, value));
+                FP value = rand.NextInt(maxValue);
+                Assert.True(value >= FP.Zero && value < maxValue, string.Format("NextInt({0}) = expected 0 <= result < {0} but got {1}", maxValue, value));
                 valueReceived[(int)value] = true;
             }
 
@@ -64,9 +64,9 @@ namespace FixMath.NET
 
             for (int i = 0; i < 100; i++)
             {
-                Fix64 value = rand.NextInt(1337);
+                FP value = rand.NextInt(1337);
 
-                Fix64 expected = Fix64RandomExpectedValues.ExpectedInts[i];
+                FP expected = Fix64RandomExpectedValues.ExpectedInts[i];
                 Assert.True(value == expected, string.Format("NextInt() sequence {0} = expected {1} but got {2}", i, expected, value));
             }
         }
@@ -78,9 +78,9 @@ namespace FixMath.NET
 
             for (int i = 0; i < 100; i++)
             {
-                Fix64 value = rand.Next();
+                FP value = rand.Next();
 
-                Fix64 expected = Fix64RandomExpectedValues.ExpectedDecimals[i];
+                FP expected = Fix64RandomExpectedValues.ExpectedDecimals[i];
                 Assert.True(value == expected, string.Format("Next() sequence {0} = expected {1} but got {2}", i, expected, value));
             }
         }
@@ -95,14 +95,14 @@ namespace FixMath.NET
 
             for (int i = 0; i < 100000; i++)
             {
-                Fix64 value = rand.Next();
-                Assert.True(value >= Fix64.Zero && value <= Fix64.One, string.Format("Next() = expected 0 <= result <= 1 but got {0}", value));
+                FP value = rand.Next();
+                Assert.True(value >= FP.Zero && value <= FP.One, string.Format("Next() = expected 0 <= result <= 1 but got {0}", value));
                 valueReceived[(int)(value*buckets)] = true;
             }
 
             for (int i = 0; i < buckets; i++)
             {
-                Assert.True(valueReceived[i], string.Format("Next() = expected to receive {0} but never got it", ((Fix64)i)/buckets));
+                Assert.True(valueReceived[i], string.Format("Next() = expected to receive {0} but never got it", ((FP)i)/buckets));
             }
         }
     }

@@ -208,13 +208,13 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
         /// Called by preStep(Fix64 dt)
         /// </summary>
         /// <param name="dt">Time in seconds since the last update.</param>
-        public override void Update(Fix64 dt)
+        public override void Update(FP dt)
         {
             Matrix3x3.Transform(ref localAnchorA, ref connectionA.orientationMatrix, out worldOffsetA);
             Matrix3x3.Transform(ref localAnchorB, ref connectionB.orientationMatrix, out worldOffsetB);
 
 
-            Fix64 errorReductionParameter;
+            FP errorReductionParameter;
             springSettings.ComputeErrorReductionAndSoftness(dt, F64.C1 / dt, out errorReductionParameter, out softness);
 
             //Mass Matrix
@@ -266,10 +266,10 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
             Vector3.Multiply(ref error, -errorReductionParameter, out biasVelocity);
 
             //Ensure that the corrective velocity doesn't exceed the max.
-            Fix64 length = biasVelocity.LengthSquared();
+            FP length = biasVelocity.LengthSquared();
             if (length > maxCorrectiveVelocitySquared)
             {
-                Fix64 multiplier = maxCorrectiveVelocity / Fix64.Sqrt(length);
+                FP multiplier = maxCorrectiveVelocity / FP.Sqrt(length);
                 biasVelocity.X *= multiplier;
                 biasVelocity.Y *= multiplier;
                 biasVelocity.Z *= multiplier;
@@ -316,7 +316,7 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
         /// Calculates and applies corrective impulses.
         /// Called automatically by space.
         /// </summary>
-        public override Fix64 SolveIteration()
+        public override FP SolveIteration()
         {
 #if !WINDOWS
             Vector3 lambda = new Vector3();
@@ -367,9 +367,9 @@ namespace BEPUphysics.Constraints.TwoEntity.Joints
                 connectionB.ApplyAngularImpulse(ref tbImpulse);
             }
 
-            return (Fix64.Abs(lambda.X) +
-					Fix64.Abs(lambda.Y) +
-					Fix64.Abs(lambda.Z));
+            return (FP.Abs(lambda.X) +
+					FP.Abs(lambda.Y) +
+					FP.Abs(lambda.Z));
         }
     }
 }

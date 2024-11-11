@@ -49,7 +49,7 @@ namespace BEPUbenchmark.Benchmarks
 
 			solver.ActiveSet.UseAutomass = true;
 			solver.AutoscaleControlImpulses = true;
-			solver.AutoscaleControlMaximumForce = Fix64.MaxValue;
+			solver.AutoscaleControlMaximumForce = FP.MaxValue;
 			solver.TimeStepDuration = .1m;
 			solver.ControlIterationCount = 100;
 			solver.FixerIterationCount = 10;
