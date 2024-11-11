@@ -4,40 +4,42 @@ using System.Runtime.CompilerServices;
 
 namespace FixMath.NET
 {
-
     /// <summary>
     /// Represents a Q31.32 fixed-point number.
     /// </summary>
-    public partial struct FP : IEquatable<FP>, IComparable<FP> {
-		// Field is public and mutable to allow serialization by XNA Content Pipeline
+    public partial struct FP : IEquatable<FP>, IComparable<FP>
+    {
+        // Field is public and mutable to allow serialization by XNA Content Pipeline
         public long RawValue;
 
         // Precision of this type is 2^-32, that is 2,3283064365386962890625E-10
-        public static readonly decimal Precision = (decimal)(new FP(1L));//0.00000000023283064365386962890625m;
+        public static readonly decimal Precision = (decimal)(new FP(1L)); //0.00000000023283064365386962890625m;
         public static readonly FP MaxValue = new FP(MAX_VALUE);
         public static readonly FP MinValue = new FP(MIN_VALUE);
-		public static readonly FP MinusOne = new FP(-ONE);
-		public static readonly FP One = new FP(ONE);
-		public static readonly FP Two = (FP)2;
-		public static readonly FP Three = (FP)3;
-		public static readonly FP Zero = new FP();
-		public static readonly FP C0p28 = (FP)0.28m;
-		/// <summary>
-		/// The value of Pi
-		/// </summary>
-		public static readonly FP Pi = new FP(PI);
+        public static readonly FP MinusOne = new FP(-ONE);
+        public static readonly FP One = new FP(ONE);
+        public static readonly FP Two = (FP)2;
+        public static readonly FP Three = (FP)3;
+        public static readonly FP Zero = new FP();
+        public static readonly FP C0p28 = (FP)0.28m;
+
+        /// <summary>
+        /// The value of Pi
+        /// </summary>
+        public static readonly FP Pi = new FP(PI);
+
         public static readonly FP PiOver2 = new FP(PI_OVER_2);
-		public static readonly FP PiOver4 = new FP(PI_OVER_4);
-		public static readonly FP PiTimes2 = new FP(PI_TIMES_2);
+        public static readonly FP PiOver4 = new FP(PI_OVER_4);
+        public static readonly FP PiTimes2 = new FP(PI_TIMES_2);
         public static readonly FP PiInv = (FP)0.3183098861837906715377675267M;
         public static readonly FP PiOver2Inv = (FP)0.6366197723675813430755350535M;
-		public static readonly FP E = new FP(E_RAW);
-		public static readonly FP EPow4 = new FP(EPOW4);
-		public static readonly FP Ln2 = new FP(LN2);
-		public static readonly FP Log2Max = new FP(LOG2MAX);
-		public static readonly FP Log2Min = new FP(LOG2MIN);
+        public static readonly FP E = new FP(E_RAW);
+        public static readonly FP EPow4 = new FP(EPOW4);
+        public static readonly FP Ln2 = new FP(LN2);
+        public static readonly FP Log2Max = new FP(LOG2MAX);
+        public static readonly FP Log2Min = new FP(LOG2MIN);
 
-		static readonly FP LutInterval = (FP)(LUT_SIZE - 1) / PiOver2;
+        static readonly FP LutInterval = (FP)(LUT_SIZE - 1) / PiOver2;
         const long MAX_VALUE = long.MaxValue;
         const long MIN_VALUE = long.MinValue;
         const int NUM_BITS = 64;
@@ -46,42 +48,45 @@ namespace FixMath.NET
         const long PI_TIMES_2 = 0x6487ED511;
         const long PI = 0x3243F6A88;
         const long PI_OVER_2 = 0x1921FB544;
-		const long PI_OVER_4 = 0xC90FDAA2;
-		const long E_RAW = 0x2B7E15162;
-		const long EPOW4 = 0x3699205C4E;
-		const long LN2 = 0xB17217F7;
-		const long LOG2MAX = 0x1F00000000;
-		const long LOG2MIN = -0x2000000000;
-		const int LUT_SIZE = (int)(PI_OVER_2 >> 15);
+        const long PI_OVER_4 = 0xC90FDAA2;
+        const long E_RAW = 0x2B7E15162;
+        const long EPOW4 = 0x3699205C4E;
+        const long LN2 = 0xB17217F7;
+        const long LOG2MAX = 0x1F00000000;
+        const long LOG2MIN = -0x2000000000;
+        const int LUT_SIZE = (int)(PI_OVER_2 >> 15);
 
-		/// <summary>
-		/// Returns a number indicating the sign of a Fix64 number.
-		/// Returns 1 if the value is positive, 0 if is 0, and -1 if it is negative.
-		/// </summary>
-		public static int SignI(FP value) {
+        /// <summary>
+        /// Returns a number indicating the sign of a Fix64 number.
+        /// Returns 1 if the value is positive, 0 if is 0, and -1 if it is negative.
+        /// </summary>
+        public static int SignI(FP value)
+        {
             return
                 value.RawValue < 0 ? -1 :
                 value.RawValue > 0 ? 1 :
                 0;
         }
 
-		public static FP Sign(FP v)
-		{
-			long raw = v.RawValue;
-			return
-				raw < 0 ? MinusOne :
-				raw > 0 ? One :
-				FP.Zero;
-		}
+        public static FP Sign(FP v)
+        {
+            long raw = v.RawValue;
+            return
+                raw < 0 ? MinusOne :
+                raw > 0 ? One :
+                FP.Zero;
+        }
 
 
-		/// <summary>
-		/// Returns the absolute value of a Fix64 number.
-		/// Note: Abs(Fix64.MinValue) == Fix64.MaxValue.
-		/// </summary>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static FP Abs(FP value) {
-            if (value.RawValue == MIN_VALUE) {
+        /// <summary>
+        /// Returns the absolute value of a Fix64 number.
+        /// Note: Abs(Fix64.MinValue) == Fix64.MaxValue.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FP Abs(FP value)
+        {
+            if (value.RawValue == MIN_VALUE)
+            {
                 return MaxValue;
             }
 
@@ -93,165 +98,174 @@ namespace FixMath.NET
         /// <summary>
         /// Returns the largest integer less than or equal to the specified number.
         /// </summary>
-        public static FP Floor(FP value) {
+        public static FP Floor(FP value)
+        {
             // Just zero out the fractional part
             return new FP((long)((ulong)value.RawValue & 0xFFFFFFFF00000000));
         }
 
-		public static FP Log2(FP x)
-		{
-			if (x.RawValue <= 0)
-				throw new ArgumentOutOfRangeException("Non-positive value passed to Ln", "x");
+        public static FP Log2(FP x)
+        {
+            if (x.RawValue <= 0)
+                throw new ArgumentOutOfRangeException("Non-positive value passed to Ln", "x");
 
-			// This implementation is based on Clay. S. Turner's fast binary logarithm
-			// algorithm[1].
+            // This implementation is based on Clay. S. Turner's fast binary logarithm
+            // algorithm[1].
 
-			long b = 1U << (FRACTIONAL_PLACES - 1);
-			long y = 0;
+            long b = 1U << (FRACTIONAL_PLACES - 1);
+            long y = 0;
 
-			long rawX = x.RawValue;
-			while (rawX < ONE)
-			{
-				rawX <<= 1;
-				y -= ONE;
-			}
+            long rawX = x.RawValue;
+            while (rawX < ONE)
+            {
+                rawX <<= 1;
+                y -= ONE;
+            }
 
-			while (rawX >= (ONE << 1))
-			{
-				rawX >>= 1;
-				y += ONE;
-			}
+            while (rawX >= (ONE << 1))
+            {
+                rawX >>= 1;
+                y += ONE;
+            }
 
-			FP z = FP.FromRaw(rawX);
+            FP z = FP.FromRaw(rawX);
 
-			for (int i = 0; i < FRACTIONAL_PLACES; i++)
-			{
-				z = z * z;
-				if (z.RawValue >= (ONE << 1))
-				{
-					z = FP.FromRaw(z.RawValue >> 1);
-					y += b;
-				}
-				b >>= 1;
-			}
+            for (int i = 0; i < FRACTIONAL_PLACES; i++)
+            {
+                z = z * z;
+                if (z.RawValue >= (ONE << 1))
+                {
+                    z = FP.FromRaw(z.RawValue >> 1);
+                    y += b;
+                }
 
-			return FP.FromRaw(y);
-		}
+                b >>= 1;
+            }
 
-		public static FP Ln(FP x)
-		{
-			return Log2(x) * Ln2;
-		}
+            return FP.FromRaw(y);
+        }
 
-		public static FP Pow2(FP x)
-		{
-			if (x.RawValue == 0) return One;
+        public static FP Ln(FP x)
+        {
+            return Log2(x) * Ln2;
+        }
 
-			// Avoid negative arguments by exploiting that exp(-x) = 1/exp(x).
-			bool neg = (x.RawValue < 0);
-			if (neg) x = -x;
+        public static FP Pow2(FP x)
+        {
+            if (x.RawValue == 0) return One;
 
-			if (x == One)
-				return neg ? One / Two : Two;
-			if (x >= Log2Max) return neg ? One / MaxValue : MaxValue;
-			if (x <= Log2Min) return neg ? MaxValue : Zero;
+            // Avoid negative arguments by exploiting that exp(-x) = 1/exp(x).
+            bool neg = (x.RawValue < 0);
+            if (neg) x = -x;
 
-			/* The algorithm is based on the power series for exp(x):
+            if (x == One)
+                return neg ? One / Two : Two;
+            if (x >= Log2Max) return neg ? One / MaxValue : MaxValue;
+            if (x <= Log2Min) return neg ? MaxValue : Zero;
+
+            /* The algorithm is based on the power series for exp(x):
              * http://en.wikipedia.org/wiki/Exponential_function#Formal_definition
-             * 
+             *
              * From term n, we get term n+1 by multiplying with x/n.
              * When the sum term drops to zero, we can stop summing.
              */
 
-			int integerPart = (int)Floor(x);
-			x = FractionalPart(x);
+            int integerPart = (int)Floor(x);
+            x = FractionalPart(x);
 
-			FP result = One;
-			FP term = One;
-			int i = 1;
-			while (term.RawValue != 0)
-			{
-				term = x * term * Ln2 / (FP)i;
-				result += term;
-				i++;
-			}
+            FP result = One;
+            FP term = One;
+            int i = 1;
+            while (term.RawValue != 0)
+            {
+                term = x * term * Ln2 / (FP)i;
+                result += term;
+                i++;
+            }
 
-			result = FromRaw(result.RawValue << integerPart);
-			if (neg) result = One / result;
+            result = FromRaw(result.RawValue << integerPart);
+            if (neg) result = One / result;
 
-			return result;
-		}
+            return result;
+        }
 
-		public static FP Pow(FP b, FP exp)
-		{
-			if (b == One)
-				return One;
-			if (exp.RawValue == 0)
-				return One;
-			if (b.RawValue == 0)
-				return Zero;
+        public static FP Pow(FP b, FP exp)
+        {
+            if (b == One)
+                return One;
+            if (exp.RawValue == 0)
+                return One;
+            if (b.RawValue == 0)
+                return Zero;
 
-			FP log2 = Log2(b);
-			return Pow2(SafeMul(exp, log2));
-		}
+            FP log2 = Log2(b);
+            return Pow2(SafeMul(exp, log2));
+        }
 
-		/// <summary>
-		/// Returns the arccos of of the specified number, calculated using Atan and Sqrt
-		/// </summary>
-		public static FP Acos(FP x)
-		{
-			if (x.RawValue == 0)
-				return FP.PiOver2;
+        /// <summary>
+        /// Returns the arccos of of the specified number, calculated using Atan and Sqrt
+        /// </summary>
+        public static FP Acos(FP x)
+        {
+            if (x.RawValue == 0)
+                return FP.PiOver2;
 
-			FP result = FP.Atan(FP.Sqrt(One - x * x) / x);
-			if (x.RawValue < 0)
-				return result + FP.Pi;
-			else
-				return result;
-		}
+            FP result = FP.Atan(FP.Sqrt(One - x * x) / x);
+            if (x.RawValue < 0)
+                return result + FP.Pi;
+            else
+                return result;
+        }
 
-		/// <summary>
-		/// Returns the smallest integral value that is greater than or equal to the specified number.
-		/// </summary>
-		public static FP Ceiling(FP value) {
+        /// <summary>
+        /// Returns the smallest integral value that is greater than or equal to the specified number.
+        /// </summary>
+        public static FP Ceiling(FP value)
+        {
             var hasFractionalPart = (value.RawValue & 0x00000000FFFFFFFF) != 0;
             return hasFractionalPart ? Floor(value) + One : value;
         }
 
-		/// <summary>
-		/// Returns the fractional part of the specified number.
-		/// </summary>
-		public static FP FractionalPart(FP value)
-		{
-			return FP.FromRaw(value.RawValue & 0x00000000FFFFFFFF);
-		}
+        /// <summary>
+        /// Returns the fractional part of the specified number.
+        /// </summary>
+        public static FP FractionalPart(FP value)
+        {
+            return FP.FromRaw(value.RawValue & 0x00000000FFFFFFFF);
+        }
 
-		/// <summary>
-		/// Rounds a value to the nearest integral value.
-		/// If the value is halfway between an even and an uneven value, returns the even value.
-		/// </summary>
-		public static FP Round(FP value) {
+        /// <summary>
+        /// Rounds a value to the nearest integral value.
+        /// If the value is halfway between an even and an uneven value, returns the even value.
+        /// </summary>
+        public static FP Round(FP value)
+        {
             var fractionalPart = value.RawValue & 0x00000000FFFFFFFF;
             var integralPart = Floor(value);
-            if (fractionalPart < 0x80000000) {
+            if (fractionalPart < 0x80000000)
+            {
                 return integralPart;
             }
-            if (fractionalPart > 0x80000000) {
+
+            if (fractionalPart > 0x80000000)
+            {
                 return integralPart + One;
             }
+
             // if number is halfway between two values, round to the nearest even number
             // this is the method used by System.Math.Round().
             return (integralPart.RawValue & ONE) == 0
-                       ? integralPart
-                       : integralPart + One;
+                ? integralPart
+                : integralPart + One;
         }
 
-		/// <summary>
-		/// Adds x and y. Performs saturating addition, i.e. in case of overflow, 
-		/// rounds to MinValue or MaxValue depending on sign of operands.
-		/// </summary>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static FP operator +(FP x, FP y) {
+        /// <summary>
+        /// Adds x and y. Performs saturating addition, i.e. in case of overflow, 
+        /// rounds to MinValue or MaxValue depending on sign of operands.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FP operator +(FP x, FP y)
+        {
 #if CHECKMATH
 			var xl = x.m_rawValue;
             var yl = y.m_rawValue;
@@ -262,29 +276,31 @@ namespace FixMath.NET
             }
             return new Fix64(sum);
 #else
-			return new FP(x.RawValue + y.RawValue);
+            return new FP(x.RawValue + y.RawValue);
 #endif
-		}
+        }
 
-		public static FP SafeAdd(FP x, FP y)
-		{
-			var xl = x.RawValue;
-			var yl = y.RawValue;
-			var sum = xl + yl;
-			// if signs of operands are equal and signs of sum and x are different
-			if (((~(xl ^ yl) & (xl ^ sum)) & MIN_VALUE) != 0)
-			{
-				sum = xl > 0 ? MAX_VALUE : MIN_VALUE;
-			}
-			return new FP(sum);
-		}
+        public static FP SafeAdd(FP x, FP y)
+        {
+            var xl = x.RawValue;
+            var yl = y.RawValue;
+            var sum = xl + yl;
+            // if signs of operands are equal and signs of sum and x are different
+            if (((~(xl ^ yl) & (xl ^ sum)) & MIN_VALUE) != 0)
+            {
+                sum = xl > 0 ? MAX_VALUE : MIN_VALUE;
+            }
 
-		/// <summary>
-		/// Subtracts y from x. Performs saturating substraction, i.e. in case of overflow, 
-		/// rounds to MinValue or MaxValue depending on sign of operands.
-		/// </summary>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static FP operator -(FP x, FP y) {
+            return new FP(sum);
+        }
+
+        /// <summary>
+        /// Subtracts y from x. Performs saturating substraction, i.e. in case of overflow, 
+        /// rounds to MinValue or MaxValue depending on sign of operands.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FP operator -(FP x, FP y)
+        {
 #if CHECKMATH
 			var xl = x.m_rawValue;
             var yl = y.m_rawValue;
@@ -295,32 +311,35 @@ namespace FixMath.NET
             }
             return new Fix64(diff);
 #else
-			return new FP(x.RawValue - y.RawValue);
+            return new FP(x.RawValue - y.RawValue);
 #endif
-		}
+        }
 
-		public static FP SafeSub(FP x, FP y)
-		{
-			var xl = x.RawValue;
-			var yl = y.RawValue;
-			var diff = xl - yl;
-			// if signs of operands are different and signs of sum and x are different
-			if ((((xl ^ yl) & (xl ^ diff)) & MIN_VALUE) != 0)
-			{
-				diff = xl < 0 ? MIN_VALUE : MAX_VALUE;
-			}
-			return new FP(diff);
-		}
+        public static FP SafeSub(FP x, FP y)
+        {
+            var xl = x.RawValue;
+            var yl = y.RawValue;
+            var diff = xl - yl;
+            // if signs of operands are different and signs of sum and x are different
+            if ((((xl ^ yl) & (xl ^ diff)) & MIN_VALUE) != 0)
+            {
+                diff = xl < 0 ? MIN_VALUE : MAX_VALUE;
+            }
 
-        static long AddOverflowHelper(long x, long y, ref bool overflow) {
+            return new FP(diff);
+        }
+
+        static long AddOverflowHelper(long x, long y, ref bool overflow)
+        {
             var sum = x + y;
             // x + y overflows if sign(x) ^ sign(y) != sign(sum)
             overflow |= ((x ^ y ^ sum) & MIN_VALUE) != 0;
             return sum;
         }
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static FP operator *(FP x, FP y) {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FP operator *(FP x, FP y)
+        {
 #if CHECKMATH
 			var xl = x.m_rawValue;
             var yl = y.m_rawValue;
@@ -391,120 +410,134 @@ namespace FixMath.NET
 
             return new Fix64(sum);
 #else
-			var xl = x.RawValue;
-			var yl = y.RawValue;
-
-			var xlo = (ulong)(xl & 0x00000000FFFFFFFF);
-			var xhi = xl >> FRACTIONAL_PLACES;
-			var ylo = (ulong)(yl & 0x00000000FFFFFFFF);
-			var yhi = yl >> FRACTIONAL_PLACES;
-
-			var lolo = xlo * ylo;
-			var lohi = (long)xlo * yhi;
-			var hilo = xhi * (long)ylo;
-			var hihi = xhi * yhi;
-
-			var loResult = lolo >> FRACTIONAL_PLACES;
-			var midResult1 = lohi;
-			var midResult2 = hilo;
-			var hiResult = hihi << FRACTIONAL_PLACES;
-
-			var sum = (long)loResult + midResult1 + midResult2 + hiResult;
-			return new FP(sum);
-#endif
-		}
-
-		public static FP SafeMul(FP x, FP y)
-		{
-			var xl = x.RawValue;
-			var yl = y.RawValue;
-
-			var xlo = (ulong)(xl & 0x00000000FFFFFFFF);
-			var xhi = xl >> FRACTIONAL_PLACES;
-			var ylo = (ulong)(yl & 0x00000000FFFFFFFF);
-			var yhi = yl >> FRACTIONAL_PLACES;
-
-			var lolo = xlo * ylo;
-			var lohi = (long)xlo * yhi;
-			var hilo = xhi * (long)ylo;
-			var hihi = xhi * yhi;
-
-			var loResult = lolo >> FRACTIONAL_PLACES;
-			var midResult1 = lohi;
-			var midResult2 = hilo;
-			var hiResult = hihi << FRACTIONAL_PLACES;
-
-			bool overflow = false;
-			var sum = AddOverflowHelper((long)loResult, midResult1, ref overflow);
-			sum = AddOverflowHelper(sum, midResult2, ref overflow);
-			sum = AddOverflowHelper(sum, hiResult, ref overflow);
-
-			bool opSignsEqual = ((xl ^ yl) & MIN_VALUE) == 0;
-
-			// if signs of operands are equal and sign of result is negative,
-			// then multiplication overflowed positively
-			// the reverse is also true
-			if (opSignsEqual)
-			{
-				if (sum < 0 || (overflow && xl > 0))
-				{
-					return MaxValue;
-				}
-			}
-			else
-			{
-				if (sum > 0)
-				{
-					return MinValue;
-				}
-			}
-
-			// if the top 32 bits of hihi (unused in the result) are neither all 0s or 1s,
-			// then this means the result overflowed.
-			var topCarry = hihi >> FRACTIONAL_PLACES;
-			if (topCarry != 0 && topCarry != -1 /*&& xl != -17 && yl != -17*/)
-			{
-				return opSignsEqual ? MaxValue : MinValue;
-			}
-
-			// If signs differ, both operands' magnitudes are greater than 1,
-			// and the result is greater than the negative operand, then there was negative overflow.
-			if (!opSignsEqual)
-			{
-				long posOp, negOp;
-				if (xl > yl)
-				{
-					posOp = xl;
-					negOp = yl;
-				}
-				else
-				{
-					posOp = yl;
-					negOp = xl;
-				}
-				if (sum > negOp && negOp < -ONE && posOp > ONE)
-				{
-					return MinValue;
-				}
-			}
-
-			return new FP(sum);
-		}
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        static int CountLeadingZeroes(ulong x) {
-            int result = 0;
-            while ((x & 0xF000000000000000) == 0) { result += 4; x <<= 4; }
-            while ((x & 0x8000000000000000) == 0) { result += 1; x <<= 1; }
-            return result;
-        }
-
-        public static FP operator /(FP x, FP y) {
             var xl = x.RawValue;
             var yl = y.RawValue;
 
-            if (yl == 0) {
-				return FP.MaxValue;
+            var xlo = (ulong)(xl & 0x00000000FFFFFFFF);
+            var xhi = xl >> FRACTIONAL_PLACES;
+            var ylo = (ulong)(yl & 0x00000000FFFFFFFF);
+            var yhi = yl >> FRACTIONAL_PLACES;
+
+            var lolo = xlo * ylo;
+            var lohi = (long)xlo * yhi;
+            var hilo = xhi * (long)ylo;
+            var hihi = xhi * yhi;
+
+            var loResult = lolo >> FRACTIONAL_PLACES;
+            var midResult1 = lohi;
+            var midResult2 = hilo;
+            var hiResult = hihi << FRACTIONAL_PLACES;
+
+            var sum = (long)loResult + midResult1 + midResult2 + hiResult;
+            return new FP(sum);
+#endif
+        }
+
+        public static FP SafeMul(FP x, FP y)
+        {
+            var xl = x.RawValue;
+            var yl = y.RawValue;
+
+            var xlo = (ulong)(xl & 0x00000000FFFFFFFF);
+            var xhi = xl >> FRACTIONAL_PLACES;
+            var ylo = (ulong)(yl & 0x00000000FFFFFFFF);
+            var yhi = yl >> FRACTIONAL_PLACES;
+
+            var lolo = xlo * ylo;
+            var lohi = (long)xlo * yhi;
+            var hilo = xhi * (long)ylo;
+            var hihi = xhi * yhi;
+
+            var loResult = lolo >> FRACTIONAL_PLACES;
+            var midResult1 = lohi;
+            var midResult2 = hilo;
+            var hiResult = hihi << FRACTIONAL_PLACES;
+
+            bool overflow = false;
+            var sum = AddOverflowHelper((long)loResult, midResult1, ref overflow);
+            sum = AddOverflowHelper(sum, midResult2, ref overflow);
+            sum = AddOverflowHelper(sum, hiResult, ref overflow);
+
+            bool opSignsEqual = ((xl ^ yl) & MIN_VALUE) == 0;
+
+            // if signs of operands are equal and sign of result is negative,
+            // then multiplication overflowed positively
+            // the reverse is also true
+            if (opSignsEqual)
+            {
+                if (sum < 0 || (overflow && xl > 0))
+                {
+                    return MaxValue;
+                }
+            }
+            else
+            {
+                if (sum > 0)
+                {
+                    return MinValue;
+                }
+            }
+
+            // if the top 32 bits of hihi (unused in the result) are neither all 0s or 1s,
+            // then this means the result overflowed.
+            var topCarry = hihi >> FRACTIONAL_PLACES;
+            if (topCarry != 0 && topCarry != -1 /*&& xl != -17 && yl != -17*/)
+            {
+                return opSignsEqual ? MaxValue : MinValue;
+            }
+
+            // If signs differ, both operands' magnitudes are greater than 1,
+            // and the result is greater than the negative operand, then there was negative overflow.
+            if (!opSignsEqual)
+            {
+                long posOp, negOp;
+                if (xl > yl)
+                {
+                    posOp = xl;
+                    negOp = yl;
+                }
+                else
+                {
+                    posOp = yl;
+                    negOp = xl;
+                }
+
+                if (sum > negOp && negOp < -ONE && posOp > ONE)
+                {
+                    return MinValue;
+                }
+            }
+
+            return new FP(sum);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static int CountLeadingZeroes(ulong x)
+        {
+            int result = 0;
+            while ((x & 0xF000000000000000) == 0)
+            {
+                result += 4;
+                x <<= 4;
+            }
+
+            while ((x & 0x8000000000000000) == 0)
+            {
+                result += 1;
+                x <<= 1;
+            }
+
+            return result;
+        }
+
+        public static FP operator /(FP x, FP y)
+        {
+            var xl = x.RawValue;
+            var yl = y.RawValue;
+
+            if (yl == 0)
+            {
+                return FP.MaxValue;
                 //throw new DivideByZeroException();
             }
 
@@ -515,16 +548,20 @@ namespace FixMath.NET
 
 
             // If the divider is divisible by 2^n, take advantage of it.
-            while ((divider & 0xF) == 0 && bitPos >= 4) {
+            while ((divider & 0xF) == 0 && bitPos >= 4)
+            {
                 divider >>= 4;
                 bitPos -= 4;
             }
 
-            while (remainder != 0 && bitPos >= 0) {
+            while (remainder != 0 && bitPos >= 0)
+            {
                 int shift = CountLeadingZeroes(remainder);
-                if (shift > bitPos) {
+                if (shift > bitPos)
+                {
                     shift = bitPos;
                 }
+
                 remainder <<= shift;
                 bitPos -= shift;
 
@@ -533,7 +570,8 @@ namespace FixMath.NET
                 quotient += div << bitPos;
 
                 // Detect overflow
-                if ((div & ~(0xFFFFFFFFFFFFFFFF >> bitPos)) != 0) {
+                if ((div & ~(0xFFFFFFFFFFFFFFFF >> bitPos)) != 0)
+                {
                     return ((xl ^ yl) & MIN_VALUE) == 0 ? MaxValue : MinValue;
                 }
 
@@ -544,53 +582,61 @@ namespace FixMath.NET
             // rounding
             ++quotient;
             var result = (long)(quotient >> 1);
-            if (((xl ^ yl) & MIN_VALUE) != 0) {
+            if (((xl ^ yl) & MIN_VALUE) != 0)
+            {
                 result = -result;
             }
 
             return new FP(result);
         }
 
-        public static FP operator %(FP x, FP y) {
+        public static FP operator %(FP x, FP y)
+        {
             return new FP(
-                x.RawValue == MIN_VALUE & y.RawValue == -1 ? 
-                0 :
-                x.RawValue % y.RawValue);
+                x.RawValue == MIN_VALUE & y.RawValue == -1 ? 0 : x.RawValue % y.RawValue);
         }
 
         /// <summary>
         /// Performs modulo as fast as possible; throws if x == MinValue and y == -1.
         /// Use the operator (%) for a more reliable but slower modulo.
         /// </summary>
-        public static FP FastMod(FP x, FP y) {
+        public static FP FastMod(FP x, FP y)
+        {
             return new FP(x.RawValue % y.RawValue);
         }
 
-        public static FP operator -(FP x) {
+        public static FP operator -(FP x)
+        {
             return x.RawValue == MIN_VALUE ? MaxValue : new FP(-x.RawValue);
         }
 
-        public static bool operator ==(FP x, FP y) {
+        public static bool operator ==(FP x, FP y)
+        {
             return x.RawValue == y.RawValue;
         }
 
-        public static bool operator !=(FP x, FP y) {
+        public static bool operator !=(FP x, FP y)
+        {
             return x.RawValue != y.RawValue;
         }
 
-        public static bool operator >(FP x, FP y) {
+        public static bool operator >(FP x, FP y)
+        {
             return x.RawValue > y.RawValue;
         }
 
-        public static bool operator <(FP x, FP y) {
+        public static bool operator <(FP x, FP y)
+        {
             return x.RawValue < y.RawValue;
         }
 
-        public static bool operator >=(FP x, FP y) {
+        public static bool operator >=(FP x, FP y)
+        {
             return x.RawValue >= y.RawValue;
         }
 
-        public static bool operator <=(FP x, FP y) {
+        public static bool operator <=(FP x, FP y)
+        {
             return x.RawValue <= y.RawValue;
         }
 
@@ -601,9 +647,11 @@ namespace FixMath.NET
         /// <exception cref="ArgumentOutOfRangeException">
         /// The argument was negative.
         /// </exception>
-        public static FP Sqrt(FP x) {
+        public static FP Sqrt(FP x)
+        {
             var xl = x.RawValue;
-            if (xl < 0) {
+            if (xl < 0)
+            {
                 // We cannot represent infinities like Single and Double, and Sqrt is
                 // mathematically undefined for x < 0. So we just throw an exception.
                 throw new ArgumentOutOfRangeException("Negative value passed to Sqrt", "x");
@@ -615,28 +663,36 @@ namespace FixMath.NET
             // second-to-top bit
             var bit = 1UL << (NUM_BITS - 2);
 
-            while (bit > num) {
+            while (bit > num)
+            {
                 bit >>= 2;
             }
 
             // The main part is executed twice, in order to avoid
             // using 128 bit values in computations.
-            for (var i = 0; i < 2; ++i) {
+            for (var i = 0; i < 2; ++i)
+            {
                 // First we get the top 48 bits of the answer.
-                while (bit != 0) {
-                    if (num >= result + bit) {
+                while (bit != 0)
+                {
+                    if (num >= result + bit)
+                    {
                         num -= result + bit;
                         result = (result >> 1) + bit;
                     }
-                    else {
+                    else
+                    {
                         result = result >> 1;
                     }
+
                     bit >>= 2;
                 }
 
-                if (i == 0) {
+                if (i == 0)
+                {
                     // Then process it again to get the lowest 16 bits.
-                    if (num > (1UL << (NUM_BITS / 2)) - 1) {
+                    if (num > (1UL << (NUM_BITS / 2)) - 1)
+                    {
                         // The remainder 'num' is too large to be shifted left
                         // by 32, so we have to add 1 to result manually and
                         // adjust 'num' accordingly.
@@ -647,7 +703,8 @@ namespace FixMath.NET
                         num = (num << (NUM_BITS / 2)) - 0x80000000UL;
                         result = (result << (NUM_BITS / 2)) + 0x80000000UL;
                     }
-                    else {
+                    else
+                    {
                         num <<= (NUM_BITS / 2);
                         result <<= (NUM_BITS / 2);
                     }
@@ -655,10 +712,13 @@ namespace FixMath.NET
                     bit = 1UL << (NUM_BITS / 2 - 2);
                 }
             }
+
             // Finally, if next bit would have been 1, round the result upwards.
-            if (num > result) {
+            if (num > result)
+            {
                 ++result;
             }
+
             return new FP((long)result);
         }
 
@@ -668,7 +728,8 @@ namespace FixMath.NET
         /// It may lose accuracy as the value of x grows.
         /// Performance: about 25% slower than Math.Sin() in x64, and 200% slower in x86.
         /// </summary>
-        public static FP Sin(FP x) {
+        public static FP Sin(FP x)
+        {
             bool flipHorizontal, flipVertical;
             var clampedL = ClampSinValue(x.RawValue, out flipHorizontal, out flipVertical);
             var clamped = new FP(clampedL);
@@ -676,15 +737,11 @@ namespace FixMath.NET
             // Find the two closest values in the LUT and perform linear interpolation
             // This is what kills the performance of this function on x86 - x64 is fine though
             var rawIndex = clamped * LutInterval;
-            var roundedIndex = Round(rawIndex); 
+            var roundedIndex = Round(rawIndex);
             var indexError = rawIndex - roundedIndex;
 
-            var nearestValue = new FP(SinLut[flipHorizontal ? 
-                SinLut.Length - 1 - (int)roundedIndex : 
-                (int)roundedIndex]);
-            var secondNearestValue = new FP(SinLut[flipHorizontal ? 
-                SinLut.Length - 1 - (int)roundedIndex - SignI(indexError) : 
-                (int)roundedIndex + SignI(indexError)]);
+            var nearestValue = new FP(SinLut[flipHorizontal ? SinLut.Length - 1 - (int)roundedIndex : (int)roundedIndex]);
+            var secondNearestValue = new FP(SinLut[flipHorizontal ? SinLut.Length - 1 - (int)roundedIndex - SignI(indexError) : (int)roundedIndex + SignI(indexError)]);
 
             var delta = (indexError * Abs(nearestValue - secondNearestValue)).RawValue;
             var interpolatedValue = nearestValue.RawValue + (flipHorizontal ? -delta : delta);
@@ -697,29 +754,31 @@ namespace FixMath.NET
         /// This is at least 3 times faster than Sin() on x86 and slightly faster than Math.Sin(),
         /// however its accuracy is limited to 4-5 decimals, for small enough values of x.
         /// </summary>
-        public static FP FastSin(FP x) {
+        public static FP FastSin(FP x)
+        {
             bool flipHorizontal, flipVertical;
             var clampedL = ClampSinValue(x.RawValue, out flipHorizontal, out flipVertical);
 
             // Here we use the fact that the SinLut table has a number of entries
             // equal to (PI_OVER_2 >> 15) to use the angle to index directly into it
             var rawIndex = (uint)(clampedL >> 15);
-            if (rawIndex >= LUT_SIZE) {
+            if (rawIndex >= LUT_SIZE)
+            {
                 rawIndex = LUT_SIZE - 1;
             }
-            var nearestValue = SinLut[flipHorizontal ?
-                SinLut.Length - 1 - (int)rawIndex :
-                (int)rawIndex];
+
+            var nearestValue = SinLut[flipHorizontal ? SinLut.Length - 1 - (int)rawIndex : (int)rawIndex];
             return new FP(flipVertical ? -nearestValue : nearestValue);
         }
 
 
-
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        static long ClampSinValue(long angle, out bool flipHorizontal, out bool flipVertical) {
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        static long ClampSinValue(long angle, out bool flipHorizontal, out bool flipVertical)
+        {
             // Clamp value to 0 - 2*PI using modulo; this is very slow but there's no better way AFAIK
             var clamped2Pi = angle % PI_TIMES_2;
-            if (angle < 0) {
+            if (angle < 0)
+            {
                 clamped2Pi += PI_TIMES_2;
             }
 
@@ -728,15 +787,19 @@ namespace FixMath.NET
             flipVertical = clamped2Pi >= PI;
             // obtain (angle % PI) from (angle % 2PI) - much faster than doing another modulo
             var clampedPi = clamped2Pi;
-            while (clampedPi >= PI) {
+            while (clampedPi >= PI)
+            {
                 clampedPi -= PI;
             }
+
             flipHorizontal = clampedPi >= PI_OVER_2;
             // obtain (angle % PI_OVER_2) from (angle % PI) - much faster than doing another modulo
             var clampedPiOver2 = clampedPi;
-            if (clampedPiOver2 >= PI_OVER_2) {
+            if (clampedPiOver2 >= PI_OVER_2)
+            {
                 clampedPiOver2 -= PI_OVER_2;
             }
+
             return clampedPiOver2;
         }
 
@@ -744,7 +807,8 @@ namespace FixMath.NET
         /// Returns the cosine of x.
         /// See Sin() for more details.
         /// </summary>
-        public static FP Cos(FP x) {
+        public static FP Cos(FP x)
+        {
             var xl = x.RawValue;
             var rawAngle = xl + (xl > 0 ? -PI - PI_OVER_2 : PI_OVER_2);
             return Sin(new FP(rawAngle));
@@ -754,7 +818,8 @@ namespace FixMath.NET
         /// Returns a rough approximation of the cosine of x.
         /// See FastSin for more details.
         /// </summary>
-        public static FP FastCos(FP x) {
+        public static FP FastCos(FP x)
+        {
             var xl = x.RawValue;
             var rawAngle = xl + (xl > 0 ? -PI - PI_OVER_2 : PI_OVER_2);
             return FastSin(new FP(rawAngle));
@@ -766,14 +831,18 @@ namespace FixMath.NET
         /// <remarks>
         /// This function is not well-tested. It may be wildly inaccurate.
         /// </remarks>
-        public static FP Tan(FP x) {
+        public static FP Tan(FP x)
+        {
             var clampedPi = x.RawValue % PI;
             var flip = false;
-            if (clampedPi < 0) {
+            if (clampedPi < 0)
+            {
                 clampedPi = -clampedPi;
                 flip = true;
             }
-            if (clampedPi > PI_OVER_2) {
+
+            if (clampedPi > PI_OVER_2)
+            {
                 flip = !flip;
                 clampedPi = PI_OVER_2 - (clampedPi - PI_OVER_2);
             }
@@ -794,245 +863,310 @@ namespace FixMath.NET
             return new FP(finalValue);
         }
 
-        public static FP FastAtan2(FP y, FP x) {
+        public static FP FastAtan2(FP y, FP x)
+        {
             var yl = y.RawValue;
             var xl = x.RawValue;
-            if (xl == 0) {
-                if (yl > 0) {
+            if (xl == 0)
+            {
+                if (yl > 0)
+                {
                     return PiOver2;
                 }
-                if (yl == 0) {
+
+                if (yl == 0)
+                {
                     return Zero;
                 }
+
                 return -PiOver2;
             }
+
             FP atan;
             var z = y / x;
 
-			// Deal with overflow
-			if (SafeAdd(One, SafeMul(SafeMul(C0p28, z), z)) == MaxValue) {
-				return y.RawValue < 0 ? -PiOver2 : PiOver2;
+            // Deal with overflow
+            if (SafeAdd(One, SafeMul(SafeMul(C0p28, z), z)) == MaxValue)
+            {
+                return y.RawValue < 0 ? -PiOver2 : PiOver2;
             }
 
-            if (Abs(z) < One) {
+            if (Abs(z) < One)
+            {
                 atan = z / (One + C0p28 * z * z);
-                if (xl < 0) {
-                    if (yl < 0) {
+                if (xl < 0)
+                {
+                    if (yl < 0)
+                    {
                         return atan - Pi;
                     }
+
                     return atan + Pi;
                 }
             }
-            else {
+            else
+            {
                 atan = PiOver2 - z / (z * z + C0p28);
-                if (yl < 0) {
+                if (yl < 0)
+                {
                     return atan - Pi;
                 }
             }
+
             return atan;
         }
 
-		/// <summary>
-		/// Returns the arctan of of the specified number, calculated using Euler series
-		/// </summary>
-		public static FP Atan(FP z)
-		{
-			if (z.RawValue == 0)
-				return Zero;
+        /// <summary>
+        /// Returns the arctan of of the specified number, calculated using Euler series
+        /// </summary>
+        public static FP Atan(FP z)
+        {
+            if (z.RawValue == 0)
+                return Zero;
 
-			// Force positive values for argument
-			// Atan(-z) = -Atan(z).
-			bool neg = (z.RawValue < 0);
-			if (neg) z = -z;
+            // Force positive values for argument
+            // Atan(-z) = -Atan(z).
+            bool neg = (z.RawValue < 0);
+            if (neg) z = -z;
 
-			FP result;
+            FP result;
 
-			if (z == One)
-				result = PiOver4;
-			else
-			{
-				bool invert = z > One;
-				if (invert) z = One / z;
-				
-				result = One;
-				FP term = One;
-				
-				FP zSq = z * z;
-				FP zSq2 = zSq * Two;
-				FP zSqPlusOne = zSq + One;
-				FP zSq12 = zSqPlusOne * Two;
-				FP dividend = zSq2;
-				FP divisor = zSqPlusOne * Three;
+            if (z == One)
+                result = PiOver4;
+            else
+            {
+                bool invert = z > One;
+                if (invert) z = One / z;
 
-				for (int i = 2; i < 30; i++)
-				{
-					term *= dividend / divisor;
-					result += term;
+                result = One;
+                FP term = One;
 
-					dividend += zSq2;
-					divisor += zSq12;
+                FP zSq = z * z;
+                FP zSq2 = zSq * Two;
+                FP zSqPlusOne = zSq + One;
+                FP zSq12 = zSqPlusOne * Two;
+                FP dividend = zSq2;
+                FP divisor = zSqPlusOne * Three;
 
-					if (term.RawValue == 0)
-						break;
-				}
+                for (int i = 2; i < 30; i++)
+                {
+                    term *= dividend / divisor;
+                    result += term;
 
-				result = result * z / zSqPlusOne;
+                    dividend += zSq2;
+                    divisor += zSq12;
 
-				if (invert)
-					result = PiOver2 - result;
-			}
+                    if (term.RawValue == 0)
+                        break;
+                }
 
-			if (neg) result = -result;
-			return result;
-		}
+                result = result * z / zSqPlusOne;
 
-		public static FP Atan2(FP y, FP x)
-		{
-			var yl = y.RawValue;
-			var xl = x.RawValue;
-			if (xl == 0)
-			{
-				if (yl > 0)
-					return PiOver2;
-				if (yl == 0)
-					return Zero;
-				return -PiOver2;
-			}
+                if (invert)
+                    result = PiOver2 - result;
+            }
 
-			var z = y / x;
+            if (neg) result = -result;
+            return result;
+        }
 
-			// Deal with overflow
-			if (SafeAdd(One, SafeMul(SafeMul((FP)0.28M, z), z)) == MaxValue)
-			{
-				return y.RawValue < 0 ? -PiOver2 : PiOver2;
-			}
-			FP atan = Atan(z);
+        public static FP Atan2(FP y, FP x)
+        {
+            var yl = y.RawValue;
+            var xl = x.RawValue;
+            if (xl == 0)
+            {
+                if (yl > 0)
+                    return PiOver2;
+                if (yl == 0)
+                    return Zero;
+                return -PiOver2;
+            }
 
-			if (xl < 0)
-			{
-				if (yl < 0)
-					return atan - Pi;
-				return atan + Pi;
-			}
+            var z = y / x;
 
-			return atan;
-		}
+            // Deal with overflow
+            if (SafeAdd(One, SafeMul(SafeMul((FP)0.28M, z), z)) == MaxValue)
+            {
+                return y.RawValue < 0 ? -PiOver2 : PiOver2;
+            }
 
-		public static implicit operator FP(int value)
-		{
-			return new FP(value);
-		}
-		public static explicit operator FP(long value) {
+            FP atan = Atan(z);
+
+            if (xl < 0)
+            {
+                if (yl < 0)
+                    return atan - Pi;
+                return atan + Pi;
+            }
+
+            return atan;
+        }
+
+        public static implicit operator FP(int value)
+        {
+            return new FP(value);
+        }
+        
+        public static explicit operator int(FP value)
+        {
+            return (int)(value.RawValue >> FRACTIONAL_PLACES);
+        }
+
+        public static explicit operator FP(long value)
+        {
             return new FP(value * ONE);
         }
-        public static explicit operator long(FP value) {
+
+        public static explicit operator long(FP value)
+        {
             return value.RawValue >> FRACTIONAL_PLACES;
         }
-        public static explicit operator FP(float value) {
+
+        public static explicit operator FP(float value)
+        {
             return new FP((long)(value * ONE));
         }
-        public static explicit operator float(FP value) {
+
+        public static explicit operator float(FP value)
+        {
             return (float)value.RawValue / ONE;
         }
-        public static explicit operator FP(double value) {
+
+        public static explicit operator FP(double value)
+        {
             return new FP((long)(value * ONE));
         }
-        public static explicit operator double(FP value) {
+
+        public static explicit operator double(FP value)
+        {
             return (double)value.RawValue / ONE;
         }
-        public static implicit operator FP(decimal value) {
+
+        public static implicit operator FP(decimal value)
+        {
             return new FP((long)(value * ONE));
         }
-        public static explicit operator decimal(FP value) {
+
+        public static explicit operator decimal(FP value)
+        {
             return (decimal)value.RawValue / ONE;
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object obj)
+        {
             return obj is FP && ((FP)obj).RawValue == RawValue;
         }
 
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return RawValue.GetHashCode();
         }
 
-        public bool Equals(FP other) {
+        public bool Equals(FP other)
+        {
             return RawValue == other.RawValue;
         }
 
-        public int CompareTo(FP other) {
+        public int CompareTo(FP other)
+        {
             return RawValue.CompareTo(other.RawValue);
         }
 
-        public override string ToString() {
+        public long ToLong() => RawValue >> FRACTIONAL_PLACES;
+        public int ToInt() => (int)(RawValue >> FRACTIONAL_PLACES);
+        public float ToFloat() => (float)RawValue / ONE;
+        public double ToDouble() => (double)RawValue / ONE;
+        public decimal ToDecimal() => (decimal)RawValue / ONE;
+
+        public override string ToString()
+        {
             return ((decimal)this).ToString();
         }
 
-        public static FP FromRaw(long rawValue) {
+        public static FP FromRaw(long rawValue)
+        {
             return new FP(rawValue);
         }
 
-        internal static void GenerateSinLut() {
-            using (var writer = new StreamWriter("Fix64SinLut.cs")) {
+        internal static void GenerateSinLut()
+        {
+            using (var writer = new StreamWriter("Fix64SinLut.cs"))
+            {
                 writer.Write(
-@"namespace FixMath.NET {
+                    @"namespace FixMath.NET {
     partial struct Fix64 {
         public static readonly long[] SinLut = new[] {");
                 int lineCounter = 0;
-                for (int i = 0; i < LUT_SIZE; ++i) {
+                for (int i = 0; i < LUT_SIZE; ++i)
+                {
                     var angle = i * Math.PI * 0.5 / (LUT_SIZE - 1);
-                    if (lineCounter++ % 8 == 0) {
+                    if (lineCounter++ % 8 == 0)
+                    {
                         writer.WriteLine();
                         writer.Write("            ");
                     }
+
                     var sin = Math.Sin(angle);
                     var rawValue = ((FP)sin).RawValue;
                     writer.Write(string.Format("0x{0:X}L, ", rawValue));
                 }
+
                 writer.Write(
-@"
+                    @"
         };
     }
 }");
             }
         }
 
-        internal static void GenerateTanLut() {
-            using (var writer = new StreamWriter("Fix64TanLut.cs")) {
+        internal static void GenerateTanLut()
+        {
+            using (var writer = new StreamWriter("Fix64TanLut.cs"))
+            {
                 writer.Write(
-@"namespace FixMath.NET {
+                    @"namespace FixMath.NET {
     partial struct Fix64 {
         public static readonly long[] TanLut = new[] {");
                 int lineCounter = 0;
-                for (int i = 0; i < LUT_SIZE; ++i) {
+                for (int i = 0; i < LUT_SIZE; ++i)
+                {
                     var angle = i * Math.PI * 0.5 / (LUT_SIZE - 1);
-                    if (lineCounter++ % 8 == 0) {
+                    if (lineCounter++ % 8 == 0)
+                    {
                         writer.WriteLine();
                         writer.Write("            ");
                     }
+
                     var tan = Math.Tan(angle);
-                    if (tan > (double)MaxValue || tan < 0.0) {
+                    if (tan > (double)MaxValue || tan < 0.0)
+                    {
                         tan = (double)MaxValue;
                     }
+
                     var rawValue = (((decimal)tan > (decimal)MaxValue || tan < 0.0) ? MaxValue : (FP)tan).RawValue;
                     writer.Write(string.Format("0x{0:X}L, ", rawValue));
                 }
+
                 writer.Write(
-@"
+                    @"
         };
     }
 }");
             }
-        }		
+        }
 
         /// <summary>
         /// This is the constructor from raw value; it can only be used interally.
         /// </summary>
         /// <param name="rawValue"></param>
-        FP(long rawValue) {
+        FP(long rawValue)
+        {
             RawValue = rawValue;
         }
 
-        public FP(int value) {
+        public FP(int value)
+        {
             RawValue = value * ONE;
         }
     }
